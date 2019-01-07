@@ -33,9 +33,16 @@ ISR(ADC_vect)
 	// is read. Consequently, if the result is left adjusted and no more
 	// than 8-bit precision is required, it is sufficient to read ADCH.
 	// Otherwise, ADCL must be read first, then ADCH.
-	ADCBuffer[ADCCounter] = ADCH;
+  uint8_t v = ADCH;
+	ADCBuffer[ADCCounter] = v;
+  if(v > threshold && !triggered && !freeze){
+    stopIndex = ( ADCCounter + waitDuration ) % ADCBUFFERSIZE;
+    triggered = true;
+  }
 
-	if (++ADCCounter >= ADCBUFFERSIZE) ADCCounter = 0;
+  if (++ADCCounter >= ADCBUFFERSIZE){
+    ADCCounter = 0;
+  }
 
 	if ( stopIndex == ADCCounter )
 	{
@@ -43,6 +50,7 @@ ISR(ADC_vect)
 		// Disable ADC and stop Free Running Conversion Mode
 		cbi( ADCSRA, ADEN );
 		freeze = true;
+    triggered = false;
 	}
 }
 

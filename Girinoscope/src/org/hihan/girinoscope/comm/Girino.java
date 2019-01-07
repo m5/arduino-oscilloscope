@@ -92,20 +92,20 @@ public class Girino {
         public final boolean tooFast;
         public final boolean reallyTooFast;
 
-        private PrescalerInfo(int n) {
-            value = (int) Math.pow(2, n);
+        public PrescalerInfo(int value) {
             double baseFrequency = 16 * 1000 * 1000;
             double clockCycleCountPerConversion = 13;
+            this.value = value;
             frequency = baseFrequency / value / clockCycleCountPerConversion;
             timeframe = 1280 / frequency;
-            tooFast = n < 5;
-            reallyTooFast = n < 3;
+            tooFast = value < 32;
+            reallyTooFast = value < 8;
             description = String.format("%.1f kHz / %.1f ms", frequency / 1000, timeframe * 1000);
         }
 
         public static List<PrescalerInfo> values() {
             List<PrescalerInfo> infos = new LinkedList<PrescalerInfo>();
-            for (int i = 2; i < 8; ++i) {
+            for (int i = 4; i <= 128; i=i*2) {
                 infos.add(new PrescalerInfo(i));
             }
             return infos;
@@ -158,6 +158,8 @@ public class Girino {
 
     private static final String DUMP_COMMAND = "d";
 
+    private static final String RESTART_COMMAND = "q";
+
     private Serial serial;
 
     private CommPortIdentifier portId;
@@ -190,6 +192,7 @@ public class Girino {
                      * delay here is to give some time to the controller to set
                      * itself up.
                      */
+                    serial.writeLine(RESTART_COMMAND);
                     Thread.sleep(SETUP_DELAY_ON_RESET);
 
                     String data;

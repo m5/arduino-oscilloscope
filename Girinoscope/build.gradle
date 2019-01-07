@@ -1,0 +1,22 @@
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'application'
+
+
+sourceSets {
+    main.java.srcDirs += 'src'
+    main.resources.srcDirs += 'src'
+}
+
+repositories {
+   flatDir {
+       dirs 'lib'
+   }
+}
+
+dependencies {
+    compile name: 'quaqua'
+    compile name: 'RXTXcomm'
+}
+
+mainClassName = 'org.hihan.girinoscope.ui.UI'

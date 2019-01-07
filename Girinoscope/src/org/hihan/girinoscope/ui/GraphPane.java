@@ -15,14 +15,23 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import org.hihan.girinoscope.Native;
 import org.hihan.girinoscope.ui.Axis.GraphLabel;
 
 @SuppressWarnings("serial")
 public class GraphPane extends JPanel {
+
+    private static final Logger logger = Logger.getLogger(UI.class.getName());
+
+    static {
+        logger.setLevel(Level.FINER);
+    }
 
     private static final Color DIVISION_COLOR = new Color(0xbcbcbc);
 
@@ -121,6 +130,7 @@ public class GraphPane extends JPanel {
                         break;
 
                     case WAIT_DURATION_RULE:
+                        logger.finer("Updated wait duration - screen coords: " + graphAreaPosition.x + " - data coords: " + uv.x);
                         int newWaitDuration = uv.x;
                         GraphPane.this.waitDuration = Math.max(0, Math.min(newWaitDuration, U_MAX));
                         break;
@@ -147,6 +157,10 @@ public class GraphPane extends JPanel {
     public void setData(byte[] data) {
         this.data = data;
         repaint();
+    }
+
+    public byte[] getData() {
+        return this.data;
     }
 
     public int getThreshold() {

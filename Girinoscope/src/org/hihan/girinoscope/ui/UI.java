@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,7 @@ import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -179,6 +181,7 @@ public class UI extends JFrame {
                         throw e;
                     }
                 }
+                Thread.sleep(1000l);
             } while (!terminated);
         }
 
@@ -248,6 +251,30 @@ public class UI extends JFrame {
         }
     };
 
+    private File previousDirectory = null;
+    private static final String EXTENSION = ".csv";
+    private final Action saveAction = new AbstractAction("Save", Icon.get("document-save.png")) {
+        @Override
+        public void actionPerformed(ActionEvent event) {
+            JFileChooser c = new JFileChooser();
+            c.setCurrentDirectory(previousDirectory);
+            int rVal = c.showOpenDialog(UI.this);
+            if (rVal == JFileChooser.APPROVE_OPTION) {
+                previousDirectory = c.getCurrentDirectory();
+                File selectedFile = c.getSelectedFile();
+                try {
+                    String fileName = selectedFile.getCanonicalPath();
+                    if (!fileName.endsWith(EXTENSION)) {
+                        selectedFile = new File(fileName + EXTENSION);
+                    }
+                    DataFile.write(selectedFile, new PrescalerInfo(parameters.get(Parameter.PRESCALER)), graphPane.getData());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
     public UI() {
         setTitle("Girinoscope");
         setIconImage(Icon.getImage("icon.png"));
@@ -293,6 +320,7 @@ public class UI extends JFrame {
         JMenuBar menuBar = new JMenuBar();
 
         JMenu fileMenu = new JMenu("File");
+        fileMenu.add(saveAction);
         fileMenu.add(exitAction);
         menuBar.add(fileMenu);
 

@@ -33,8 +33,10 @@ public class Serial implements Closeable {
 
     private static final Logger logger = Logger.getLogger(Serial.class.getName());
 
+
     static {
         Native.setLibraryPath();
+        logger.setLevel(Level.FINER);
     }
 
     /** The port we're normally going to use. */
@@ -162,6 +164,7 @@ public class Serial implements Closeable {
             return -1;
         }
         logger.log(Level.FINE, "< {0} byte(s)", offset);
+        logger.log(Level.FINE, new String(buffer));
         return offset;
     }
 

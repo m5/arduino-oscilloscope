@@ -30,7 +30,7 @@
 
 #define DEBUG		0
 
-#define ADCBUFFERSIZE	512 //1280
+#define ADCBUFFERSIZE	1280
 
 #define ADCPIN		0
 #define errorPin	13
@@ -82,7 +82,7 @@ void error (void);
 void fillBuffer( \
 	char *buffer, \
 	byte bufferSize, \
-	HardwareSerial* serial = &Serial );
+	HardwareSerial* serial = &Serial);
 void printStatus(void);
 
 //-----------------------------------------------------------------------------
@@ -93,10 +93,11 @@ extern volatile uint16_t stopIndex;
 extern volatile uint16_t ADCCounter;
 extern volatile  uint8_t ADCBuffer[ADCBUFFERSIZE];
 extern volatile  boolean freeze;
+extern volatile  boolean triggered;
+extern volatile uint32_t ADCCounterCounter;
 
 extern           uint8_t prescaler;
 extern           uint8_t triggerEvent;
 extern           uint8_t threshold;
 
 extern              char commandBuffer[COMBUFFERSIZE+1];
-

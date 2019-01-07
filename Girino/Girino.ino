@@ -35,8 +35,10 @@
          uint16_t waitDuration;
 volatile uint16_t stopIndex;
 volatile uint16_t ADCCounter;
+volatile uint32_t ADCCounterCounter;
 volatile  uint8_t ADCBuffer[ADCBUFFERSIZE];
 volatile  boolean freeze;
+volatile  boolean triggered;
 
           uint8_t prescaler;
           uint8_t triggerEvent;
@@ -88,6 +90,12 @@ void loop (void) {
 	Serial.println( ADCSRB, BIN );
 	#endif
 
+  if((ADCCounterCounter / 20000) % 2 == 0){
+    sbi( PORTB, PORTB5 );
+  }else{
+    cbi( PORTB, PORTB5 );
+  }
+
 	// If freeze flag is set, then it is time to send the buffer to the serial port
 	if ( freeze )
 	{
@@ -127,7 +135,7 @@ void loop (void) {
 			// Parse character
 		switch (theChar) {
 			case 's':			// 's' for starting ADC conversions
-				//Serial.println("ADC conversions started");
+				// Serial.println("ADC conversions started");
 
 				// Clear buffer
 				memset( (void *)ADCBuffer, 0, sizeof(ADCBuffer) );
@@ -135,10 +143,10 @@ void loop (void) {
 				startADC();
 				// Let the ADC fill the buffer a little bit
 				//delay(1);
-				startAnalogComparator();
+				// startAnalogComparator();
 				break;
 			case 'S':			// 'S' for stopping ADC conversions
-				//Serial.println("ADC conversions stopped");
+				//Serial.println("ADC conversions stopped"); 
 				stopAnalogComparator();
 				stopADC();
 				break;
@@ -206,7 +214,7 @@ void loop (void) {
 				fillBuffer( commandBuffer, COMBUFFERSIZE );
 
 				// Convert buffer to integer
-				uint8_t newW = atoi( commandBuffer );
+				uint16_t newW = atoi( commandBuffer );
 
 				// Display moving status indicator
 				Serial.print("Setting waitDuration to: ");
@@ -216,7 +224,7 @@ void loop (void) {
 				}
 				break;
 
-			case 't':			// 'w' for new threshold setting
+			case 't':			// 't' for new threshold setting
 			case 'T': {
 				// Wait for COMMANDDELAY ms to be sure that the Serial buffer is filled
 				delay(COMMANDDELAY);
@@ -240,6 +248,10 @@ void loop (void) {
 				printStatus();
 				break;
 
+      case 'q':    // 'q' for quit and restart
+      case 'Q':
+        setup();
+        break;
 			default:
 				// Display error message
 				Serial.print("ERROR: Command not found, it was: ");

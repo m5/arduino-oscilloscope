@@ -10,6 +10,7 @@ import javax.swing.ImageIcon;
 /**
  * For the records, all the icons in this package have been found in my
  * '/usr/icons/Mint-X/actions/16' folders.
+ * https://github.com/linuxmint/mint-x-icons/tree/master/usr/share/icons/Mint-X/actions/16
  */
 public class Icon {
 
