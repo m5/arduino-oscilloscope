@@ -375,7 +375,7 @@ public class UI extends JFrame {
                     }
                     String xFormat = info.timeframe > 0.005 ? "%.0f ms" : "%.1f ms";
                     Axis xAxis = new Axis(0, info.timeframe * 1000, xFormat);
-                    Axis yAxis = new Axis(-2.5, 2.5, 0.5, "%.2f V");
+                    Axis yAxis = new Axis(0, 500, 50, "%.2f G");
                     graphPane.setCoordinateSystem(xAxis, yAxis);
                 }
             };
